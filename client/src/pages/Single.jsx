@@ -7,7 +7,7 @@ import axios from "axios";
 import moment from "moment";
 import { useContext } from "react";
 import { AuthContext } from "../context/authContext";
-import DOMPurify from "dompurify";
+// import DOMPurify from "dompurify";
 
 const Single = () => {
   const [post, setPost] = useState({});
@@ -22,7 +22,7 @@ const Single = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`/posts/${postId}`);
+        const res = await axios.get(`http://localhost:8800/api/posts/${postId}`);
         setPost(res.data);
       } catch (err) {
         console.log(err);
@@ -33,13 +33,14 @@ const Single = () => {
 
   const handleDelete = async ()=>{
     try {
-      await axios.delete(`/posts/${postId}`);
+      await axios.delete(`http://localhost:8800/api/posts/${postId}`,{
+        withCredentials: true,
+      });
       navigate("/")
     } catch (err) {
       console.log(err);
     }
   }
-
   const getText = (html) =>{
     const doc = new DOMParser().parseFromString(html, "text/html")
     return doc.body.textContent
@@ -68,11 +69,8 @@ const Single = () => {
           )}
         </div>
         <h1>{post.title}</h1>
-        <p
-          dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(post.content),
-          }}
-        ></p>      </div>
+        <p>{getText(post.content)}</p>
+        </div>
       <Menu cat={post.cat}/>
     </div>
   );
