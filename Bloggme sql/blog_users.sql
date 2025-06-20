@@ -16,24 +16,31 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `posts`
+-- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `posts`;
+DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `posts` (
-  `id` int NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `content` varchar(1000) NOT NULL,
-  `img` varchar(255) NOT NULL,
-  `date` datetime NOT NULL,
-  `uid` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `uid_idx` (`uid`),
-  CONSTRAINT `uid` FOREIGN KEY (`uid`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `users` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(45) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `img` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (2,'mohan chand','zudio@gmai.com','$2b$10$b5zhaUXYXskyYb1L/l725u4A.jzNwgL.rZUHtlYl5fhwN/r3saMEe',NULL),(3,'test','test@123.com','$2b$10$3U8ckIUWcihz3BUw00QCAeA45wVcRI6eZmZuK3/hvVZcOAQpsZ8Om',NULL);
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -44,4 +51,4 @@ CREATE TABLE `posts` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-06-16 12:59:27
+-- Dump completed on 2025-06-19 15:34:37
