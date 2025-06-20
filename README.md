@@ -21,26 +21,17 @@ BloggMe is a full-stack blog web application where users can read blogs without 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/bloggme.git
+git clone https://github.com/kmohanchandkmc/bloggme.git
 cd bloggme
 ```
 
 ### 2. Backend Setup
 
 ```bash
-cd backend
+cd server
 npm install
 ```
 
-- Create a `.env` file with your database credentials (example):
-
-```env
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=yourpassword
-DB_NAME=bloggme
-PORT=8800
-```
 
 - Start the backend server:
 
@@ -53,7 +44,7 @@ The backend will run on: [http://localhost:8800](http://localhost:8800)
 ### 3. Frontend Setup
 
 ```bash
-cd ../frontend
+cd ../client
 npm install
 ```
 
