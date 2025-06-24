@@ -7,8 +7,8 @@ import moment from "moment";
 
 const Write = () => {
   const state = useLocation().state;
-  const [value, setValue] = useState(state?.title || "");
-  const [title, setTitle] = useState(state?.content || "");
+  const [title, setTitle] = useState(state?.title || "");
+  const [content, setContent] = useState(state?.content || "");
   const [file, setFile] = useState(null);
   const [cat, setCat] = useState(state?.cat || "");
 
@@ -33,7 +33,7 @@ const Write = () => {
       state
         ? await axios.put(`http://localhost:8800/api/posts/${state.id}`, {
             title,
-            content: value,
+            content: content,
             cat,
             img: file ? imgUrl : "",
           },{
@@ -41,7 +41,7 @@ const Write = () => {
           })
         : await axios.post('http://localhost:8800/api/posts', {
             title,
-            content: value,
+            content: content,
             cat,
             img: file ? imgUrl : "",
             date: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
@@ -59,7 +59,7 @@ const Write = () => {
       <div className="content">
         <input
           type="text"
-          value={value}
+          value={title}
           placeholder="Title"
           onChange={(e) => setTitle(e.target.value)}
         />
@@ -67,8 +67,8 @@ const Write = () => {
           <ReactQuill
             className="editor"
             theme="snow"
-            value={title}
-            onChange={setValue}
+            value={content}
+            onChange={setContent}
           />
         </div>
       </div>
