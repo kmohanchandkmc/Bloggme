@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -14,48 +13,66 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setInputs((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value.trim(), // remove extra spaces
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null); // clear previous errors
+
+    // Optional: Basic frontend validation
+    if (!inputs.username || !inputs.email || !inputs.password) {
+      setError("All fields are required.");
+      return;
+    }
+
     try {
-      await axios.post("http://localhost:8800/api/auth/register", inputs);
+      await axios.post(
+        "http://localhost:8800/api/auth/register",
+        inputs,
+        { withCredentials: true } // in case cookies are set later
+      );
       navigate("/login");
     } catch (err) {
-      setError(err.response.data);
+      setError(err?.response?.data || "Something went wrong.");
     }
   };
 
   return (
     <div className="auth">
       <h1>Register</h1>
-      <form>
+      <form onSubmit={handleSubmit}>
         <input
           required
           type="text"
-          placeholder="username"
+          placeholder="Username"
           name="username"
+          value={inputs.username}
           onChange={handleChange}
         />
         <input
           required
           type="email"
-          placeholder="email"
+          placeholder="Email"
           name="email"
+          value={inputs.email}
           onChange={handleChange}
         />
         <input
           required
           type="password"
-          placeholder="password"
+          placeholder="Password"
           name="password"
+          value={inputs.password}
           onChange={handleChange}
         />
-        <button onClick={handleSubmit}>Register</button>
-        {err && <p>{err}</p>}
+        <button type="submit">Register</button>
+        {err && <p className="error">{err}</p>}
         <span>
-          Do you have an account? <Link to="/login">Login</Link>
+          Already have an account? <Link to="/login">Login</Link>
         </span>
       </form>
     </div>

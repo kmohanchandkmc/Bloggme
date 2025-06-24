@@ -16,7 +16,9 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    await axios.post("http://localhost:8800/api/auth/logout");
+    await axios.post("http://localhost:8800/api/auth/logout", {}, {
+      withCredentials: true, // ✅ Required to clear cookie
+    });
     setCurrentUser(null);
   };
 

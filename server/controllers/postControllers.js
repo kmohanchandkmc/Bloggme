@@ -76,10 +76,11 @@ export const updatePost = (req, res) => {
     if (err) return res.status(403).json("Token is not valid!");
 
     const postId = req.params.id;
+    const image = req.file ? req.file.filename : req.body.img;
     const q =
       "UPDATE posts SET `title`=?,`content`=?,`img`=?,`cat`=? WHERE `id` = ? AND `uid` = ?";
 
-    const values = [req.body.title, req.body.content, req.body.img, req.body.cat];
+    const values = [req.body.title, req.body.content, image, req.body.cat];
 
     db.query(q, [...values, postId, userInfo.id], (err, data) => {
       if (err) return res.status(500).json(err);

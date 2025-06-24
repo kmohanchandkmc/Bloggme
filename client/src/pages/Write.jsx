@@ -12,45 +12,63 @@ const Write = () => {
   const [file, setFile] = useState(null);
   const [cat, setCat] = useState(state?.cat || "");
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
+  // ✅ Upload image to server
   const upload = async () => {
+    if (!file) return "";
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const res = await axios.post("http://localhost:8800/api/upload", formData);
+      const res = await axios.post("http://localhost:8800/api/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true, // ✅ send cookies
+      });
       return res.data;
     } catch (err) {
-      console.log(err);
+      console.error("Upload error:", err);
+      return "";
     }
   };
 
+  // ✅ Handle publish or update
   const handleClick = async (e) => {
     e.preventDefault();
-    const imgUrl = await upload();
+
+    let imgUrl = state?.img || "";
+    if (file) {
+      imgUrl = await upload();
+    }
+    
 
     try {
-      state
-        ? await axios.put(`http://localhost:8800/api/posts/${state.id}`, {
-            title,
-            content: content,
-            cat,
-            img: file ? imgUrl : "",
-          },{
-            withCredentials: true,
-          })
-        : await axios.post('http://localhost:8800/api/posts', {
-            title,
-            content: content,
-            cat,
-            img: file ? imgUrl : "",
-            date: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-          },{
-            withCredentials: true,
-          });
-          navigate("/")
+      if (state) {
+        // ✅ Update post
+        await axios.put(`http://localhost:8800/api/posts/${state.id}`, {
+          title,
+          content,
+          cat,
+          img: file ? imgUrl : state.img || "",
+        }, {
+          withCredentials: true, // ✅ send cookies
+        });
+      } else {
+        // ✅ Create new post
+        await axios.post("http://localhost:8800/api/posts", {
+          title,
+          content,
+          cat,
+          img: imgUrl,
+          date: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+        }, {
+          withCredentials: true, // ✅ send cookies
+        });
+      }
+      navigate("/");
     } catch (err) {
-      console.log(err);
+      console.error("Post error:", err?.response?.data || err.message);
     }
   };
 
@@ -75,95 +93,45 @@ const Write = () => {
       <div className="menu">
         <div className="item">
           <h1>Publish</h1>
-          <span>
-            <b>Status: </b> Draft
-          </span>
-          <span>
-            <b>Visibility: </b> Public
-          </span>
+          <span><b>Status:</b> Draft</span>
+          <span><b>Visibility:</b> Public</span>
           <input
-            style={{ display: "none" }}
             type="file"
             id="file"
-            name=""
+            style={{ display: "none" }}
             onChange={(e) => setFile(e.target.files[0])}
           />
-          <label className="file" htmlFor="file">
-            Upload Image
-          </label>
+          <label className="file" htmlFor="file">Upload Image</label>
+          {file && (
+            <img
+              src={URL.createObjectURL(file)}
+              alt="preview"
+              width={150}
+              style={{ marginTop: "10px", borderRadius: "4px" }}
+            />
+          )}
           <div className="buttons">
-            <button>Save as a draft</button>
+            <button>Save as Draft</button>
             <button onClick={handleClick}>Publish</button>
           </div>
         </div>
         <div className="item">
           <h1>Category</h1>
-          <div className="cat">
-            <input
-              type="radio"
-              checked={cat === "art"}
-              name="cat"
-              value="art"
-              id="art"
-              onChange={(e) => setCat(e.target.value)}
-            />
-            <label htmlFor="art">Art</label>
-          </div>
-          <div className="cat">
-            <input
-              type="radio"
-              checked={cat === "science"}
-              name="cat"
-              value="science"
-              id="science"
-              onChange={(e) => setCat(e.target.value)}
-            />
-            <label htmlFor="science">Science</label>
-          </div>
-          <div className="cat">
-            <input
-              type="radio"
-              checked={cat === "technology"}
-              name="cat"
-              value="technology"
-              id="technology"
-              onChange={(e) => setCat(e.target.value)}
-            />
-            <label htmlFor="technology">Technology</label>
-          </div>
-          <div className="cat">
-            <input
-              type="radio"
-              checked={cat === "cinema"}
-              name="cat"
-              value="cinema"
-              id="cinema"
-              onChange={(e) => setCat(e.target.value)}
-            />
-            <label htmlFor="cinema">Cinema</label>
-          </div>
-          <div className="cat">
-            <input
-              type="radio"
-              checked={cat === "design"}
-              name="cat"
-              value="design"
-              id="design"
-              onChange={(e) => setCat(e.target.value)}
-            />
-            <label htmlFor="design">Design</label>
-          </div>
-          <div className="cat">
-            <input
-              type="radio"
-              checked={cat === "food"}
-              name="cat"
-              value="food"
-              id="food"
-              onChange={(e) => setCat(e.target.value)}
-            />
-            <label htmlFor="food">Food</label>
-          </div>
+          {["art", "science", "technology", "cinema", "design", "food"].map((category) => (
+            <div className="cat" key={category}>
+              <input
+                type="radio"
+                checked={cat === category}
+                name="cat"
+                value={category}
+                id={category}
+                onChange={(e) => setCat(e.target.value)}
+              />
+              <label htmlFor={category}>
+                {category[0].toUpperCase() + category.slice(1)}
+              </label>
+            </div>
+          ))}
         </div>
       </div>
     </div>
